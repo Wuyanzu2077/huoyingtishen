@@ -18,7 +18,7 @@ class TimerApp:
         # 无边框
         self.root.overrideredirect(True)
 
-        # 置顶
+        # 窗口置顶
         self.root.attributes("-topmost", True)
 
         # 窗口大小
@@ -28,6 +28,7 @@ class TimerApp:
         # 透明背景
         self.root.configure(bg="black")
         self.root.attributes("-transparentcolor", "black")
+
 
         # 画布
         self.canvas = tk.Canvas(
@@ -41,7 +42,7 @@ class TimerApp:
         self.canvas.pack()
 
 
-        # 圆形背景
+        # 圆形
         self.canvas.create_oval(
             10,
             10,
@@ -90,10 +91,11 @@ class TimerApp:
         )
 
 
-        # Q触发
-        keyboard.add_hotkey(
+        # 全局监听 Q
+        # 游戏/其他按键状态下也能触发
+        keyboard.on_press_key(
             "q",
-            self.start
+            lambda e: self.start()
         )
 
 
@@ -123,7 +125,7 @@ class TimerApp:
     def start(self):
         global running
 
-        # 倒计时中，禁止再次触发
+        # 倒计时期间禁止再次触发
         if running:
             return
 
@@ -159,7 +161,7 @@ class TimerApp:
 
 
 
-        # 1结束直接回14
+        # 1结束直接恢复14
         self.canvas.itemconfig(
             self.text,
             text=str(COUNTDOWN),
