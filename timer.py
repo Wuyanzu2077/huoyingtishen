@@ -113,40 +113,34 @@ class TimerApp:
         )
 
 
-    def start(self):
-        global running
-
-        if running:
-            return
-
-        running = True
-
-        threading.Thread(
-            target=self.countdown,
-            daemon=True
-        ).start()
-
-
-
     def countdown(self):
-        global running
+    global running
 
-        for i in range(COUNTDOWN, -1, -1):
+    for i in range(COUNTDOWN, 0, -1):
 
-            self.canvas.itemconfig(
-                self.text,
-                text=str(i)
-            )
-
-            time.sleep(1)
-
+        # 14-6 绿色，5-1 红色
+        if i > 5:
+            color = "lime"
+        else:
+            color = "red"
 
         self.canvas.itemconfig(
             self.text,
-            text=str(COUNTDOWN)
+            text=str(i),
+            fill=color
         )
 
-        running = False
+        time.sleep(1)
+
+
+    # 回到14秒
+    self.canvas.itemconfig(
+        self.text,
+        text=str(COUNTDOWN),
+        fill="lime"
+    )
+
+    running = False
 
 
 
