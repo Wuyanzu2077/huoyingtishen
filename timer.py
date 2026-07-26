@@ -21,14 +21,13 @@ class TimerApp:
         # 置顶
         self.root.attributes("-topmost", True)
 
-        # 窗口大小（给关闭按钮留空间）
+        # 窗口大小
         size = CIRCLE_SIZE + 20
         self.root.geometry(f"{size}x{size}")
 
         # 透明背景
         self.root.configure(bg="black")
         self.root.attributes("-transparentcolor", "black")
-
 
         # 画布
         self.canvas = tk.Canvas(
@@ -42,7 +41,7 @@ class TimerApp:
         self.canvas.pack()
 
 
-        # 圆
+        # 圆形背景
         self.canvas.create_oval(
             10,
             10,
@@ -58,7 +57,7 @@ class TimerApp:
             size // 2,
             size // 2,
             text=str(COUNTDOWN),
-            fill="white",
+            fill="lime",
             font=("Arial", FONT_SIZE)
         )
 
@@ -71,7 +70,6 @@ class TimerApp:
             fill="red",
             font=("Arial", 16, "bold")
         )
-
 
         self.canvas.tag_bind(
             self.close,
@@ -92,18 +90,25 @@ class TimerApp:
         )
 
 
-        keyboard.add_hotkey("q", self.start)
+        # Q触发
+        keyboard.add_hotkey(
+            "q",
+            self.start
+        )
 
 
         self.root.mainloop()
 
 
 
+    # 开始拖动
     def start_move(self, event):
         self.x = event.x
         self.y = event.y
 
 
+
+    # 移动窗口
     def move(self, event):
         x = self.root.winfo_x() + event.x - self.x
         y = self.root.winfo_y() + event.y - self.y
@@ -113,34 +118,55 @@ class TimerApp:
         )
 
 
+
+    # Q触发
+    def start(self):
+        global running
+
+        # 倒计时中，禁止再次触发
+        if running:
+            return
+
+        running = True
+
+        threading.Thread(
+            target=self.countdown,
+            daemon=True
+        ).start()
+
+
+
+    # 倒计时
     def countdown(self):
-    global running
+        global running
 
-    for i in range(COUNTDOWN, 0, -1):
+        for i in range(COUNTDOWN, 0, -1):
 
-        # 14-6 绿色，5-1 红色
-        if i > 5:
-            color = "lime"
-        else:
-            color = "red"
+            # 14-6绿色，5-1红色
+            if i > 5:
+                color = "lime"
+            else:
+                color = "red"
 
+
+            self.canvas.itemconfig(
+                self.text,
+                text=str(i),
+                fill=color
+            )
+
+            time.sleep(1)
+
+
+
+        # 1结束直接回14
         self.canvas.itemconfig(
             self.text,
-            text=str(i),
-            fill=color
+            text=str(COUNTDOWN),
+            fill="lime"
         )
 
-        time.sleep(1)
-
-
-    # 回到14秒
-    self.canvas.itemconfig(
-        self.text,
-        text=str(COUNTDOWN),
-        fill="lime"
-    )
-
-    running = False
+        running = False
 
 
 
